@@ -5,8 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,40 +42,40 @@ fun CalculatorApp(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Bottom
+            .background(Color.White) // White background
+            .padding(16.dp)
     ) {
-        // Display Area
+        // Simple Display Area
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(0.3f)
+                .padding(8.dp)
+                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp)) // Added a simple border
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.End
         ) {
             Text(
                 text = equation,
-                fontSize = 32.sp,
-                color = Color.White,
-                textAlign = TextAlign.End,
-                maxLines = 2,
-                lineHeight = 40.sp
+                fontSize = 24.sp,
+                color = Color.DarkGray,
+                textAlign = TextAlign.End
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = result,
-                fontSize = 48.sp,
+                fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.LightGray,
+                color = Color.Black,
                 textAlign = TextAlign.End
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // Keypad
-        val buttons = listOf(
+        // Grid-like layout for buttons
+        val buttonRows = listOf(
             listOf("C", "(", ")", "/"),
             listOf("7", "8", "9", "*"),
             listOf("4", "5", "6", "-"),
@@ -82,37 +83,42 @@ fun CalculatorApp(modifier: Modifier = Modifier) {
             listOf("0", ".", "DEL", "=")
         )
 
-        buttons.forEach { row ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                row.forEach { label ->
-                    CalculatorButton(
-                        label = label,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            when (label) {
-                                "C" -> {
-                                    equation = ""
-                                    result = ""
-                                }
-                                "DEL" -> {
-                                    if (equation.isNotEmpty()) {
-                                        equation = equation.dropLast(1)
+        Column(modifier = Modifier.weight(0.7f)) {
+            buttonRows.forEach { row ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    row.forEach { label ->
+                        SimpleButton(
+                            label = label,
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(2.dp),
+                            onClick = {
+                                when (label) {
+                                    "C" -> {
+                                        equation = ""
+                                        result = ""
+                                    }
+                                    "DEL" -> {
+                                        if (equation.isNotEmpty()) {
+                                            equation = equation.dropLast(1)
+                                        }
+                                    }
+                                    "=" -> {
+                                        result = calculateResult(equation)
+                                    }
+                                    else -> {
+                                        equation += label
                                     }
                                 }
-                                "=" -> {
-                                    result = calculateResult(equation)
-                                }
-                                else -> {
-                                    equation += label
-                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -120,34 +126,30 @@ fun CalculatorApp(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CalculatorButton(
+fun SimpleButton(
     label: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val backgroundColor = when (label) {
-        "/", "*", "-", "+", "=" -> Color(0xFFFF9800) // Orange for operators
-        "C", "DEL", "(", ")" -> Color.Gray
-        else -> Color.DarkGray
+    // Simple beginner-style colors: Blue for equals, Light Gray for others
+    val color = when (label) {
+        "=" -> ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)) // Standard Blue
+        "C", "DEL" -> ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)) // Red for clear/del
+        "/", "*", "-", "+" -> ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0), contentColor = Color.Black)
+        else -> ButtonDefaults.buttonColors(containerColor = Color(0xFFF5F5F5), contentColor = Color.Black)
     }
-
-    val contentColor = Color.White
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .aspectRatio(1f),
-        shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = contentColor
-        ),
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp), // Standard rounded corners
+        colors = color,
         contentPadding = PaddingValues(0.dp)
     ) {
         Text(
             text = label,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Normal
         )
     }
 }
@@ -200,7 +202,6 @@ fun tokenize(expression: String): List<String> {
 fun evaluateTokens(tokens: List<String>): Double {
     if (tokens.isEmpty()) return 0.0
     
-    // Pass 1: Handle * and /
     val pass1 = mutableListOf<String>()
     var i = 0
     while (i < tokens.size) {
@@ -218,13 +219,12 @@ fun evaluateTokens(tokens: List<String>): Double {
         }
     }
     
-    // Pass 2: Handle + and -
     if (pass1.isEmpty()) return 0.0
     var result = pass1[0].toDoubleOrNull() ?: return Double.NaN
     var j = 1
     while (j < pass1.size) {
         val op = pass1[j]
-        if (j + 1 >= pass1.size) return result // Or return NaN? Let's say partial eval.
+        if (j + 1 >= pass1.size) return result
         val nextVal = pass1[j + 1].toDoubleOrNull() ?: return Double.NaN
         if (op == "+") result += nextVal else if (op == "-") result -= nextVal
         j += 2

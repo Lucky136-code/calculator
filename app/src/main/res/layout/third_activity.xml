@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BASIC CALC"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/txtInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input: "
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/txtResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result: "
+        android:textSize="25sp" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:layout_marginTop="20dp">
+
+        <!-- Noob rows: I'll just put TextViews as buttons -->
+        <TextView android:id="@+id/btn7" android:text="7" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn8" android:text="8" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn9" android:text="9" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnDiv" android:text="/" android:textSize="24sp" android:padding="20dp" />
+
+        <TextView android:id="@+id/btn4" android:text="4" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn5" android:text="5" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn6" android:text="6" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnMul" android:text="*" android:textSize="24sp" android:padding="20dp" />
+
+        <TextView android:id="@+id/btn1" android:text="1" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn2" android:text="2" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btn3" android:text="3" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnMin" android:text="-" android:textSize="24sp" android:padding="20dp" />
+
+        <TextView android:id="@+id/btn0" android:text="0" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnClear" android:text="C" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnEq" android:text="=" android:textSize="24sp" android:padding="20dp" />
+        <TextView android:id="@+id/btnPlus" android:text="+" android:textSize="24sp" android:padding="20dp" />
+
+    </GridLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/goLcm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Go to LCM"
+            android:textSize="18sp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/goPower"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Go to Power"
+            android:textSize="18sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+</LinearLayout>

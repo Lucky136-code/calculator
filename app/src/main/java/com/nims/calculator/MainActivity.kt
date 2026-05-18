@@ -5,9 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,39 +41,36 @@ fun CalculatorApp(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White) // White background
-            .padding(16.dp)
+            .background(Color.White)
+            .padding(24.dp)
     ) {
-        // Simple Display Area
+        // Simple Text Display (No boxes)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.3f)
-                .padding(8.dp)
-                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp)) // Added a simple border
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+                .weight(0.4f),
+            verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End
         ) {
             Text(
                 text = equation,
-                fontSize = 24.sp,
-                color = Color.DarkGray,
+                fontSize = 28.sp,
+                color = Color.Gray,
                 textAlign = TextAlign.End
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = result,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Light,
                 color = Color.Black,
                 textAlign = TextAlign.End
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Grid-like layout for buttons
+        // Text-only buttons (No boxes or colors)
         val buttonRows = listOf(
             listOf("C", "(", ")", "/"),
             listOf("7", "8", "9", "*"),
@@ -83,74 +79,51 @@ fun CalculatorApp(modifier: Modifier = Modifier) {
             listOf("0", ".", "DEL", "=")
         )
 
-        Column(modifier = Modifier.weight(0.7f)) {
+        Column(modifier = Modifier.weight(0.6f)) {
             buttonRows.forEach { row ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     row.forEach { label ->
-                        SimpleButton(
-                            label = label,
+                        Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
-                                .padding(2.dp),
-                            onClick = {
-                                when (label) {
-                                    "C" -> {
-                                        equation = ""
-                                        result = ""
-                                    }
-                                    "DEL" -> {
-                                        if (equation.isNotEmpty()) {
-                                            equation = equation.dropLast(1)
+                                .clickable {
+                                    when (label) {
+                                        "C" -> {
+                                            equation = ""
+                                            result = ""
+                                        }
+                                        "DEL" -> {
+                                            if (equation.isNotEmpty()) {
+                                                equation = equation.dropLast(1)
+                                            }
+                                        }
+                                        "=" -> {
+                                            result = calculateResult(equation)
+                                        }
+                                        else -> {
+                                            equation += label
                                         }
                                     }
-                                    "=" -> {
-                                        result = calculateResult(equation)
-                                    }
-                                    else -> {
-                                        equation += label
-                                    }
-                                }
-                            }
-                        )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = label,
+                                fontSize = 24.sp,
+                                color = if (label == "=") Color.Blue else Color.Black,
+                                fontWeight = if (label == "=") FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun SimpleButton(
-    label: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    // Simple beginner-style colors: Blue for equals, Light Gray for others
-    val color = when (label) {
-        "=" -> ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)) // Standard Blue
-        "C", "DEL" -> ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)) // Red for clear/del
-        "/", "*", "-", "+" -> ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0), contentColor = Color.Black)
-        else -> ButtonDefaults.buttonColors(containerColor = Color(0xFFF5F5F5), contentColor = Color.Black)
-    }
-
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp), // Standard rounded corners
-        colors = color,
-        contentPadding = PaddingValues(0.dp)
-    ) {
-        Text(
-            text = label,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Normal
-        )
     }
 }
 
